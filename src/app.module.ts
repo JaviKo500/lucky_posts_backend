@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+
 import { ServerModule } from './server/server.module';
+import { RolesModule } from './roles/roles.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    ServerModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -17,6 +18,8 @@ import { ServerModule } from './server/server.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    ServerModule,
+    RolesModule,
   ],
   controllers: [],
   providers: [],
