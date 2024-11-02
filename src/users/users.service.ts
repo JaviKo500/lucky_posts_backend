@@ -99,9 +99,10 @@ export class UsersService {
     }
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     try {
-      return `This action removes a #${id} user`;
+      const user = await this.findOne(id);
+      await this.userRepository.remove(user);
     } catch (error) {
       HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
     }
