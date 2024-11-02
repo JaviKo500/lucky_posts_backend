@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { GendersService } from './genders.service';
 import { CreateGenderDto } from './dto/create-gender.dto';
 import { UpdateGenderDto } from './dto/update-gender.dto';
@@ -23,8 +32,11 @@ export class GendersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGenderDto: UpdateGenderDto) {
-    return this.gendersService.update(+id, updateGenderDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateGenderDto: UpdateGenderDto,
+  ) {
+    return this.gendersService.update(id, updateGenderDto);
   }
 
   @Delete(':id')
