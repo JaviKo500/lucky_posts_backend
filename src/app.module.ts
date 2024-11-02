@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ServerModule } from './server/server.module';
 import { RolesModule } from './roles/roles.module';
 import { GendersModule } from './genders/genders.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -22,6 +23,7 @@ import { GendersModule } from './genders/genders.module';
     ServerModule,
     RolesModule,
     GendersModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
