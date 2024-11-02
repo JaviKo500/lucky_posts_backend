@@ -34,8 +34,17 @@ export class RolesService {
     return `This action returns a #${id} role`;
   }
 
-  update(id: number, updateRoleDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`;
+  async update(id: number, updateRoleDto: UpdateRoleDto) {
+    try {
+      const role = { id, ...updateRoleDto };
+      if (role.name) {
+        role.name = role.name.toLowerCase();
+      }
+      await this.roleRepository.save(role);
+      return role;
+    } catch (error) {
+      HandelDExceptionsHelper.handelDBExceptions(error, this.logger);
+    }
   }
 
   remove(id: number) {
