@@ -12,5 +12,5 @@ export class CreateRoleDto {
 
   @IsDate()
   @IsOptional()
-  createdAt: string;
+  createdDate: string;
 }
