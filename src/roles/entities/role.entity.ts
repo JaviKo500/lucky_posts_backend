@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({
   name: 'roles',
@@ -26,4 +32,14 @@ export class Role {
     default: 'now()',
   })
   created_at: Date;
+
+  @BeforeInsert()
+  checkNameInsert() {
+    this.name = this.name.toLowerCase();
+  }
+
+  @BeforeUpdate()
+  checkNameUpdate() {
+    this.name = this.name.toLowerCase();
+  }
 }

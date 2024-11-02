@@ -1,19 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import { HandelDExceptionsHelper } from 'src/common/helpers/handel-d-exceptions.helper';
+
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+
 import { Role } from './entities/role.entity';
 
 @Injectable()
 export class RolesService {
+  private readonly logger = new Logger('RolesService');
   constructor(
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
   ) {}
-  create(createRoleDto: CreateRoleDto) {
-    return 'This action adds a new role';
+  async create(createRoleDto: CreateRoleDto) {
+    try {
+      const role = this.roleRepository.create(createRoleDto);
+      await this.roleRepository.save(role);
+      return role;
+    } catch (error) {
+      HandelDExceptionsHelper.handelDBExceptions(error, this.logger);
+    }
   }
 
   findAll() {
