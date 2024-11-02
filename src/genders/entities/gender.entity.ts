@@ -21,7 +21,7 @@ export class Gender {
     nullable: false,
     unique: true,
   })
-  type: string;
+  value: string;
 
   @Column({
     type: 'timestamp',
@@ -31,6 +31,6 @@ export class Gender {
 
   @BeforeInsert()
   checkTypeInsert() {
-    this.type = this.type.toLowerCase();
+    this.value = this.value.toLowerCase();
   }
 }
