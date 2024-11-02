@@ -55,8 +55,16 @@ export class UsersService {
     }
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    try {
+      return await this.userRepository.find({
+        where: {
+          status: 'active',
+        },
+      });
+    } catch (error) {
+      HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
+    }
   }
 
   async findOne(id: number) {
