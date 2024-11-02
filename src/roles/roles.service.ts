@@ -1,8 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
-import { HandelDExceptionsHelper } from 'src/common/helpers/handel-d-exceptions.helper';
+import { HandelDBExceptionsHelper } from 'src/common/helpers/handel-db-exceptions.helper';
 
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -22,16 +22,37 @@ export class RolesService {
       await this.roleRepository.save(role);
       return role;
     } catch (error) {
-      HandelDExceptionsHelper.handelDBExceptions(error, this.logger);
+      HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
     }
   }
 
-  findAll() {
-    return `This action returns all roles`;
+  async findAll(term?: string) {
+    try {
+      if (!term) {
+        return await this.roleRepository.find();
+      }
+
+      return await this.roleRepository.find({
+        where: {
+          name: Like(`%${term.toLowerCase()}%`),
+        },
+      });
+    } catch (error) {
+      HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} role`;
+  async findOne(id: number) {
+    try {
+      const role = await this.roleRepository.findOneBy({
+        id,
+      });
+      if (!role)
+        throw new NotFoundException(`Product whit id "${id}" not found`);
+      return role;
+    } catch (error) {
+      HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
+    }
   }
 
   async update(id: number, updateRoleDto: UpdateRoleDto) {
@@ -43,11 +64,16 @@ export class RolesService {
       await this.roleRepository.save(role);
       return role;
     } catch (error) {
-      HandelDExceptionsHelper.handelDBExceptions(error, this.logger);
+      HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} role`;
+  async remove(id: number) {
+    try {
+      const role = await this.findOne(id);
+      await this.roleRepository.remove(role);
+    } catch (error) {
+      HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
+    }
   }
 }

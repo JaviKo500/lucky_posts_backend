@@ -5,7 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 
-export class HandelDExceptionsHelper {
+export class HandelDBExceptionsHelper {
   static handelDBExceptions(error: any, logger: Logger) {
     if (error.code === '23505') {
       throw new BadRequestException(error.detail);
