@@ -68,7 +68,7 @@ export class User {
     type: 'timestamp',
     default: null,
   })
-  created_update: Date;
+  updated_date: Date;
 
   @ManyToOne(() => Role, (role) => role.user, {
     eager: true,

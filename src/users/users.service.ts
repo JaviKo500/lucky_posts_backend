@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 
 import { HandelDBExceptionsHelper } from 'src/common/helpers/handel-db-exceptions.helper';
 
@@ -41,6 +41,8 @@ export class UsersService {
 
       const user = this.userRepository.create({
         ...createUserDto,
+        first_name: createUserDto.firstName,
+        last_name: createUserDto.lastName,
         rol: role,
         gender: gender,
       });
@@ -57,17 +59,40 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    try {
+      const user = await this.userRepository.findOneBy({
+        id,
+        status: Not('inactive'),
+      });
+      if (!user) throw new NotFoundException(`User whit id "${id}" not found`);
+      return user;
+    } catch (error) {
+      HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
+    }
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
-      const user = {
-        id,
-        ...updateUserDto,
-      };
-      await this.userRepository.save(user);
+      const user: User = await this.findOne(id);
+
+      user.status = updateUserDto.status ?? user.status;
+      user.updated_date = new Date();
+
+      user.first_name = updateUserDto.username ?? user.username;
+      user.first_name = updateUserDto.firstName ?? user.first_name;
+      user.last_name = updateUserDto.lastName ?? user.last_name;
+
+      if (updateUserDto.roleId) {
+        user.rol = await this.rolesService.getDefaultRole(updateUserDto.roleId);
+      }
+
+      if (updateUserDto.genderId) {
+        user.gender = await this.gendersService.findOne(updateUserDto.genderId);
+      }
+      await this.userRepository.save({
+        ...user,
+      });
       return user;
     } catch (error) {
       HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
@@ -75,6 +100,10 @@ export class UsersService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} user`;
+    try {
+      return `This action removes a #${id} user`;
+    } catch (error) {
+      HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
+    }
   }
 }
