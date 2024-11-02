@@ -115,4 +115,13 @@ export class UsersService {
       HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
     }
   }
+
+  async register(createUserDto: CreateUserDto) {
+    try {
+      createUserDto.status = 'register';
+      return await this.create(createUserDto);
+    } catch (error) {
+      HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
+    }
+  }
 }

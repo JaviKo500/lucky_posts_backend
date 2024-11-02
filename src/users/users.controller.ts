@@ -21,6 +21,11 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Post()
+  register(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.register(createUserDto);
+  }
+
   @Get()
   findAll() {
     return this.usersService.findAll();
