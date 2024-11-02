@@ -1,25 +1,27 @@
 import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({
-  name: 'roles',
+  name: 'genders',
 })
-export class Role {
+export class Gender {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column({
     type: 'varchar',
     length: 100,
-    unique: true,
     nullable: false,
+    unique: true,
   })
   name: string;
 
   @Column({
-    type: 'text',
-    default: '',
+    type: 'varchar',
+    length: 100,
+    nullable: false,
+    unique: true,
   })
-  description: string;
+  type: string;
 
   @Column({
     type: 'timestamp',
@@ -28,7 +30,7 @@ export class Role {
   created_date: Date;
 
   @BeforeInsert()
-  checkNameInsert() {
-    this.name = this.name.toLowerCase();
+  checkTypeInsert() {
+    this.type = this.type.toLowerCase();
   }
 }
