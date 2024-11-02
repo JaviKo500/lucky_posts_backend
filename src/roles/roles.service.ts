@@ -47,8 +47,7 @@ export class RolesService {
       const role = await this.roleRepository.findOneBy({
         id,
       });
-      if (!role)
-        throw new NotFoundException(`Product whit id "${id}" not found`);
+      if (!role) throw new NotFoundException(`Role whit id "${id}" not found`);
       return role;
     } catch (error) {
       HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);

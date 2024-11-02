@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { GendersService } from './genders.service';
 import { CreateGenderDto } from './dto/create-gender.dto';
@@ -22,13 +23,13 @@ export class GendersController {
   }
 
   @Get()
-  findAll() {
-    return this.gendersService.findAll();
+  findAll(@Query('term') term: string) {
+    return this.gendersService.findAll(term);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.gendersService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.gendersService.findOne(id);
   }
 
   @Patch(':id')
@@ -40,7 +41,7 @@ export class GendersController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.gendersService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.gendersService.remove(id);
   }
 }

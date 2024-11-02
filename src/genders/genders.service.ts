@@ -1,10 +1,14 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Like, Repository } from 'typeorm';
+
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { HandelDBExceptionsHelper } from 'src/common/helpers/handel-db-exceptions.helper';
+
 import { CreateGenderDto } from './dto/create-gender.dto';
 import { UpdateGenderDto } from './dto/update-gender.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { Gender } from './entities/gender.entity';
-import { Repository } from 'typeorm';
-import { HandelDBExceptionsHelper } from 'src/common/helpers/handel-db-exceptions.helper';
 
 @Injectable()
 export class GendersService {
@@ -27,12 +31,32 @@ export class GendersService {
     }
   }
 
-  findAll() {
-    return `This action returns all genders`;
+  async findAll(term?: string) {
+    try {
+      if (!term) {
+        return await this.genderRepository.find();
+      }
+      return await this.genderRepository.find({
+        where: {
+          value: Like(`%${term.toLowerCase()}%`),
+        },
+      });
+    } catch (error) {
+      HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} gender`;
+  async findOne(id: number) {
+    try {
+      const gender = await this.genderRepository.findOneBy({
+        id,
+      });
+      if (!gender)
+        throw new NotFoundException(`Gender whit id "${id}" not found`);
+      return gender;
+    } catch (error) {
+      HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
+    }
   }
 
   async update(id: number, updateGenderDto: UpdateGenderDto) {
@@ -49,7 +73,12 @@ export class GendersService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} gender`;
+  async remove(id: number) {
+    try {
+      const gender = await this.findOne(id);
+      await this.genderRepository.remove(gender);
+    } catch (error) {
+      HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
+    }
   }
 }
