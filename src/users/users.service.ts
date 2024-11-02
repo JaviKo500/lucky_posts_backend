@@ -13,6 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Role } from 'src/roles/entities/role.entity';
 import { Gender } from 'src/genders/entities/gender.entity';
+import { BcryptAdapterImpl } from 'src/common/adapters/bcrypt.adapter';
 
 @Injectable()
 export class UsersService {
@@ -45,6 +46,7 @@ export class UsersService {
         last_name: createUserDto.lastName,
         rol: role,
         gender: gender,
+        password: BcryptAdapterImpl.hashSync(createUserDto.password),
       });
 
       await this.userRepository.save(user);
@@ -97,6 +99,10 @@ export class UsersService {
 
       if (updateUserDto.genderId) {
         user.gender = await this.gendersService.findOne(updateUserDto.genderId);
+      }
+
+      if (updateUserDto.password) {
+        user.password = BcryptAdapterImpl.hashSync(updateUserDto.password);
       }
       await this.userRepository.save({
         ...user,
