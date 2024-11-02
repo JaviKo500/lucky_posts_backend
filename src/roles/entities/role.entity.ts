@@ -1,4 +1,11 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/auth/entities/user.entity';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({
   name: 'roles',
@@ -26,6 +33,9 @@ export class Role {
     default: 'now()',
   })
   created_date: Date;
+
+  @OneToMany(() => User, (user) => user.rol)
+  user: User;
 
   @BeforeInsert()
   checkNameInsert() {

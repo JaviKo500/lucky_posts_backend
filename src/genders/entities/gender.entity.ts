@@ -1,4 +1,11 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/auth/entities/user.entity';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({
   name: 'genders',
@@ -29,6 +36,8 @@ export class Gender {
   })
   created_date: Date;
 
+  @OneToMany(() => User, (user) => user.gender)
+  user: User;
   @BeforeInsert()
   checkTypeInsert() {
     this.value = this.value.toLowerCase();
