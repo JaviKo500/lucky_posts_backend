@@ -26,12 +26,14 @@ export class User {
   @Column({
     type: 'varchar',
     length: 100,
+    default: '',
   })
   first_name: string;
 
   @Column({
     type: 'varchar',
     length: 100,
+    default: '',
   })
   last_name: string;
 
@@ -52,7 +54,7 @@ export class User {
   @Column({
     type: 'varchar',
     length: 100,
-    nullable: false,
+    default: 'register',
   })
   status: string;
 

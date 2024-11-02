@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 
@@ -74,5 +79,22 @@ export class RolesService {
     } catch (error) {
       HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
     }
+  }
+
+  async getDefaultRole(roleId?: number) {
+    if (roleId) {
+      const roleName = process?.env?.REGISTER_ROLE ?? '';
+      if (!roleName)
+        throw new InternalServerErrorException(
+          'Required REGISTER_ROLE in .env',
+        );
+      const [defaultRole] = await this.findAll(roleName);
+      if (!roleName)
+        throw new InternalServerErrorException(
+          `Role with name ${roleName} not found`,
+        );
+      return defaultRole;
+    }
+    return await this.findOne(roleId);
   }
 }
