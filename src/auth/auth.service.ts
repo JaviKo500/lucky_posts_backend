@@ -4,6 +4,7 @@ import { UsersService } from 'src/users/users.service';
 import { HandelDBExceptionsHelper } from 'src/common/helpers/handel-db-exceptions.helper';
 import { BcryptAdapterImpl } from 'src/common/adapters/bcrypt.adapter';
 import { JwtService } from '@nestjs/jwt';
+import { JwtPayloadInterface } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +30,7 @@ export class AuthService {
     }
   }
 
-  private getJwtToken(data: any) {
+  private getJwtToken(data: JwtPayloadInterface) {
     return this.jwtService.sign(data);
   }
 }
