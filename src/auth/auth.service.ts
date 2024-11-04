@@ -1,26 +1,35 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { LoginAuthDto } from './dto/login-auth.dto';
+import { UsersService } from 'src/users/users.service';
+import { HandelDBExceptionsHelper } from 'src/common/helpers/handel-db-exceptions.helper';
+import { BcryptAdapterImpl } from 'src/common/adapters/bcrypt.adapter';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  private readonly logger = new Logger('AuthService');
+
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
+  async login(loginAuthDto: LoginAuthDto) {
+    try {
+      const { email, password } = loginAuthDto;
+
+      const user = await this.usersService.findOneByEmail(email);
+      if (!BcryptAdapterImpl.compareSync(password, user.password))
+        throw new UnauthorizedException('Invalid credentials');
+
+      return {
+        access_token: this.getJwtToken({ id: user.id }),
+      };
+    } catch (error) {
+      HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
+    }
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  private getJwtToken(data: any) {
+    return this.jwtService.sign(data);
   }
 }

@@ -3,6 +3,7 @@ import {
   NotFoundException,
   InternalServerErrorException,
   Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
 
 export class HandelDBExceptionsHelper {
@@ -12,6 +13,9 @@ export class HandelDBExceptionsHelper {
     }
     if (error.status === 404) {
       throw new NotFoundException(error.message);
+    }
+    if (error.status === 401) {
+      throw new UnauthorizedException(error.message);
     }
     logger.error(`${error.message} - ${error.detail}`);
     throw new InternalServerErrorException(

@@ -82,6 +82,24 @@ export class UsersService {
     }
   }
 
+  async findOneByEmail(email: string) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email },
+        select: {
+          email: true,
+          password: true,
+          id: true,
+        },
+      });
+      if (!user)
+        throw new NotFoundException(`User whit email "${email}" not found`);
+      return user;
+    } catch (error) {
+      HandelDBExceptionsHelper.handelDBExceptions(error, this.logger);
+    }
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
       const user: User = await this.findOne(id);
