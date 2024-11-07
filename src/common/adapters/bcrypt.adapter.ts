@@ -6,8 +6,6 @@ export class BcryptAdapterImpl {
   }
 
   static compareSync(password: string, encryptedPassword: string): string {
-    console.log('<--------------- JK Bcrypt.adapter --------------->');
-    console.log(password, encryptedPassword);
     return bcrypt.compareSync(password, encryptedPassword);
   }
 }

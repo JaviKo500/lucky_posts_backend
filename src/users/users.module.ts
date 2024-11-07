@@ -12,6 +12,6 @@ import { GendersModule } from 'src/genders/genders.module';
   controllers: [UsersController],
   providers: [UsersService, TypeOrmModule],
   imports: [TypeOrmModule.forFeature([User]), RolesModule, GendersModule],
-  exports: [UsersService],
+  exports: [UsersService, TypeOrmModule],
 })
 export class UsersModule {}
